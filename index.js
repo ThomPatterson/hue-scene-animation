@@ -4,7 +4,7 @@ const uuid = require('short-uuid');
 const hueHelper = require('./hueHelper.js');
 
 const config = process.env.hasOwnProperty('CONFIG') ? JSON.parse(process.env.CONFIG) : require('./config.js');
-let supportedAnimationTypes = ['forward', 'backward', 'evenodd'];
+let supportedAnimationTypes = ['forward', 'backward', 'evenodd', 'random'];
 let existingAnimations = [];
 
 
@@ -26,6 +26,8 @@ const startAnimation = (initialLightStates, transitionTime, transitionDelay, ani
       colorStateArr = rotateBackward(colorStateArr);
     } else if (animation == 'evenodd') {
       colorStateArr = flipEvenOdd(colorStateArr);
+    } else if (animation == 'random') {
+      colorStateArr = randomize(colorStateArr);
     }
 
     //set new colors
@@ -44,7 +46,7 @@ const stopAnimation = (existingAnimationIndex) => {
   clearInterval(existingAnimations[existingAnimationIndex].intervalTimeout);
   existingAnimations = [
     ...existingAnimations.slice(0, existingAnimationIndex),
-    ...existingAnimations.slice(existingAnimationIndex+1, existingAnimationIndex.length)
+    ...existingAnimations.slice(existingAnimationIndex + 1, existingAnimationIndex.length)
   ]
 }
 
@@ -73,6 +75,14 @@ const flipEvenOdd = (colorStateArr) => {
     }
   }
   return newLightStateArr;
+}
+
+const randomize = (colorStateArr) => {
+  for (let i = colorStateArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [colorStateArr[i], colorStateArr[j]] = [colorStateArr[j], colorStateArr[i]];
+  }
+  return colorStateArr;
 }
 
 
@@ -118,7 +128,7 @@ app.get('/startAnimation', async (req, res) => {
     }
 
     //stop any animations already running for this roomName
-    let existingAnimationIndex = existingAnimations.findIndex(anim => anim.roomName==roomScene.room);
+    let existingAnimationIndex = existingAnimations.findIndex(anim => anim.roomName == roomScene.room);
     if (existingAnimationIndex > -1) {
       stopAnimation(existingAnimationIndex);
     }
@@ -151,7 +161,7 @@ app.get('/stopAnimation', async (req, res) => {
     return res.status(400).send('Missing required parameter: id');
   }
 
-  let existingAnimationIndex = existingAnimations.findIndex(anim => anim.id==id);
+  let existingAnimationIndex = existingAnimations.findIndex(anim => anim.id == id);
   if (existingAnimationIndex < 0) {
     return res.status(400).send(`id ${id} not recognized as an existing animation`);
   }
