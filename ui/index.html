@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Hue preset animations</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+</head>
+
+<body>
+
+  <label for="roomList">Room</label>
+  <select id="roomList">
+  </select>
+
+  <label for="roomList">Scene</label>
+  <select id="sceneList">
+  </select>
+
+  <label for="animationList">Animation Type</label>
+  <select id="animationList">
+    <option value='forward'>Forward</option>
+    <option value='backward'>Backward</option>
+    <option value='evenodd'>Even Odd</option>
+  </select>
+
+  <label for="transitionTime">Transition Time (sec)</label>
+  <input type="number" id="transitionTime" name="transitionTime" min="0" value="1" />
+
+  <label for="transitionDelay">Time between transitions (sec)</label>
+  <input type="number" id="transitionDelay" name="transitionDelay" min="0" value="5" />
+
+  <button id="startAnimation">Start</button>
+
+  <br><br><br><br>
+
+  <select id="runningList">
+  </select>
+
+  <button id="stopAnimation">Stop</button>
+
+</body>
+
+</html>

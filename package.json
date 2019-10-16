@@ -1,0 +1,16 @@
+{
+  "name": "hue-scene-animation",
+  "version": "0.0.1",
+  "description": "Animate Philips Hue scenes",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Thom Patterson",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "express": "^4.17.1",
+    "short-uuid": "^3.1.1"
+  }
+}
