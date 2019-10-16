@@ -119,7 +119,7 @@ app.get('/startAnimation', async (req, res) => {
     }
 
     let initialLightStates = await hueHelper.getSceneLightStates(sceneId);
-    let sortedInitialLightStates = await hueHelper.sortSceneLights(initialLightStates);
+    let sortedInitialLightStates = await hueHelper.sortSceneLights(initialLightStates, roomScene.groupId);
 
     if (animation == 'evenodd') {
       if (initialLightStates.length < 2) {

@@ -69,6 +69,44 @@ const getRoomSceneList = async () => {
 
   return updatedScenes;
 }
+
+
+const sortSceneLights = async (initialLightStates, roomGroupId) => {
+  //get the ids of the lights
+  let lightIdsInScene = Object.keys(initialLightStates);
+
+  //check if this room has an override in the config
+  if (config.hasOwnProperty('ROOM_LIGHT_ORDER_OVERRIDES')) {
+    let i = config.ROOM_LIGHT_ORDER_OVERRIDES.findIndex(room => room.group == roomGroupId);
+    if (i > -1) {
+      //verify light IDs in override match light IDs in initialLightStates
+      let a = [...config.ROOM_LIGHT_ORDER_OVERRIDES[i].lightsOrder];
+      let b = [...lightIdsInScene];
+      if (a.sort().join('-') == b.sort().join('-')) {
+        return sortSceneLightsByOverride(initialLightStates, config.ROOM_LIGHT_ORDER_OVERRIDES[i].lightsOrder);
+      } else {
+        console.log(`Room with groupID=${roomGroupId} has override, but light IDs don't match what was found in the scene (${JSON.stringify(lightIdsInScene)})`);
+      }
+    }
+  }
+
+  return await sortSceneLightsByName(initialLightStates);
+}
+
+/*
+  sort the lights in a scene as specfied by the config file
+*/
+const sortSceneLightsByOverride = (initialLightStates, lightsOrder) => {
+  let sortedInitialLightStates = {}
+
+  lightsOrder.forEach(lightId => {
+    sortedInitialLightStates[`id-${lightId}`] = initialLightStates[lightId];
+  });
+  console.log('sorted by override');
+
+  return sortedInitialLightStates;
+}
+
 /*
   hue light IDs won't necessarily be in the same order as the lights are installed
   e.g.
@@ -81,7 +119,8 @@ const getRoomSceneList = async () => {
   assuming that the user named their lights sequentially, sort the lights in the
   lightstates to correspond to the order the lights are actually installed in
 */
-const sortSceneLights = async (initialLightStates) => {
+const sortSceneLightsByName = async (initialLightStates) => {
+  //get the ids of the lights
   let lightIdsInScene = Object.keys(initialLightStates);
   let lightNames = await getLightNames();
   let lightsInScene = lightIdsInScene.map(lightId => lightNames[lightId]);
@@ -101,6 +140,8 @@ const sortSceneLights = async (initialLightStates) => {
     //order isn't maintained with numeric keys, so prefix with id- and strip it off later
     sortedInitialLightStates[`id-${lightId}`] = initialLightStates[lightId];
   });
+
+  console.log('sorted by name');
 
   return sortedInitialLightStates;
 }
